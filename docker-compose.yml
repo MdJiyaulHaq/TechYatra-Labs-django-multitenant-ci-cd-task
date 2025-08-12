@@ -1,11 +1,9 @@
 services:
   db:
-    image: postgres:15
+    image: postgres:17-alpine
     restart: always
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    env_file:
+      - .env.dev  # or .env.prod for production
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     ports:
@@ -19,7 +17,7 @@ services:
     ports:
       - "8000:8000"
     env_file:
-      - .env.dev   # or .env.prod for production
+      - .env.dev  # or .env.prod for production
     depends_on:
       - db
 
