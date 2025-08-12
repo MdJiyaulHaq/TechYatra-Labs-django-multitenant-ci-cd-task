@@ -1,0 +1,20 @@
+---
+name: Linting and Testing
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Linter
+        run: docker compose run --rm web sh -c "flake8"
+
+      - name: Run Tests
+        run: docker compose run --rm web sh -c "while ! pg_isready -h db -p 5432 -U postgres; do sleep 1; done && pytest"
