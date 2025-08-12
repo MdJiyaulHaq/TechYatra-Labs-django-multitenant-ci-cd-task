@@ -3,23 +3,33 @@ services:
     image: postgres:17-alpine
     restart: always
     env_file:
-      - .env.dev  # or .env.prod for production
+      - .env.dev # or .env.prod for production
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   web:
     build: .
-    command: gunicorn Django_TechYatra.wsgi:application --bind 0.0.0.0:8000
+    restart: unless-stopped
+    depends_on:
+      - db
     volumes:
       - .:/app
+      - media_volume:/app/media
     ports:
       - "8000:8000"
     env_file:
-      - .env.dev  # or .env.prod for production
-    depends_on:
-      - db
+      - .env.dev # or .env.prod for production
+    environment:
+      - DJANGO_SETTINGS_MODULE=Django_TechYatra.settings.dev
+    command: bash -c "python manage.py migrate_schemas --shared && gunicorn Django_TechYatra.wsgi:application --bind 0.0.0.0:8000"
 
 volumes:
   postgres_data:
+  media_volume:
