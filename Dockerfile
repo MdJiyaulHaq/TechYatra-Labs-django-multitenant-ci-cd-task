@@ -26,9 +26,6 @@ ENV PYTHONUNBUFFERED=1
 COPY --from=builder /install /usr/local
 COPY . /app
 
-# Use environment variable for settings module; fallback to dev if not provided
-ENV DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-Django_TechYatra.settings.dev}
-
 EXPOSE 8000
 
 CMD ["gunicorn", "Django_TechYatra.wsgi:application", "--bind", "0.0.0.0:8000"]
