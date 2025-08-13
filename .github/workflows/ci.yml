@@ -10,52 +10,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:17-alpine
-        env:
-          POSTGRES_DB: postgres
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: strongpassword
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U postgres -d postgres"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v4
-        with:
-          python-version: "3.13"
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install "python-dotenv[cli]"
-
-      - name: Load environment variables from .env.dev
-        run: |
-        shell: bash
-
-      - name: Wait for Postgres to be ready
-        run: |
-          until pg_isready -h localhost -p 5432 -U $POSTGRES_USER -d $POSTGRES_DB; do sleep 1; done
-
-      - name: Run shared migrations (django-tenants)
-        run: |
-          python -m dotenv run -- python manage.py migrate_schemas --shared
-
-      # Optional: create default tenant if needed by your app/tests
-      # - name: Create default tenant (optional)
-      #   run: |
-      #     python manage.py shell -c "from customers.models import Client, Domain; t=Client(schema_name='public', name='Public'); t.save(); Domain.objects.create(domain='localhost', tenant=t)"
 
       - name: Build Docker image (no push)
         uses: docker/build-push-action@v6
