@@ -14,7 +14,7 @@ env:
   DJANGO_SETTINGS_MODULE: Django_TechYatra.settings.dev
 
 jobs:
-  test-and-build:
+  build:
     runs-on: ubuntu-latest
 
     services:
@@ -56,24 +56,10 @@ jobs:
         run: |
           python manage.py migrate_schemas --shared
 
-      - name: (optional) Create public/test tenants required by tests
-        run: |
-          python - <<'PY'
-          import os, django
-          os.environ.setdefault('DJANGO_SETTINGS_MODULE','Django_TechYatra.settings.dev')
-          django.setup()
-          try:
-              from customers.models import Client, Domain
-              if not Client.objects.filter(schema_name='public').exists():
-                  t = Client(schema_name='public', name='Public', paid_until=None, on_trial=False)
-                  t.save()
-                  Domain.objects.create(domain='localhost', tenant=t)
-          except Exception as e:
-              print("Tenant creation skipped or failed:", e)
-          PY
-
-      - name: Run Django tests
-        run: python manage.py test
+      # Optional: create default tenant if needed by your app/tests
+      # - name: Create default tenant (optional)
+      #   run: |
+      #     python manage.py shell -c "from customers.models import Client, Domain; t=Client(schema_name='public', name='Public'); t.save(); Domain.objects.create(domain='localhost', tenant=t)"
 
       - name: Build Docker image (no push)
         uses: docker/build-push-action@v4

@@ -1,3 +1,4 @@
 [flake8]
 exclude = migrations, __pycache__, manage.py, settings.py, base.py, dev.py, prod.py, .venv, .env, .git, .idea, .vscode
 max-line-length = 88
+extend-ignore = E203, W503
