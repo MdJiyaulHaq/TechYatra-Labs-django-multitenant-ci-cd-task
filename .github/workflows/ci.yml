@@ -17,10 +17,14 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
 
+      - name: Set image name (lowercase)
+        # Converts OWNER/REPO to lowercase: required by GHCR
+        run: echo "IMAGE_NAME=${{ env.REGISTRY }}/${{ github.repository }}" >> $GITHUB_ENV
+
       - name: Build Docker image (no push)
         uses: docker/build-push-action@v6
         with:
           context: .
           file: ./Dockerfile
           push: false
-          tags: ${{ github.repository }}:ci
+          tags: ${{ env.IMAGE_NAME }}:ci
