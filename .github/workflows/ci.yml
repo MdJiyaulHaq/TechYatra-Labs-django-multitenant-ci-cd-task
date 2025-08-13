@@ -62,7 +62,7 @@ jobs:
       #     python manage.py shell -c "from customers.models import Client, Domain; t=Client(schema_name='public', name='Public'); t.save(); Domain.objects.create(domain='localhost', tenant=t)"
 
       - name: Build Docker image (no push)
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: ./Dockerfile
