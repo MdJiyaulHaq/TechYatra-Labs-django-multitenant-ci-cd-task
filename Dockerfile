@@ -6,13 +6,34 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-RUN apt-get update && apt-get install -y build-essential libpq-dev --no-install-recommends \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpq-dev \
+    postgresql-client \
+    libjpeg-dev \
+    zlib1g-dev \
+    linux-headers-generic \
+    --no-install-recommends && \
+    rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
+COPY ./requirements.txt /tmp/requirements.txt
+COPY ./requirements.dev.txt /tmp/requirements.dev.txt
 
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+ARG DEV=false
+RUN python -m venv /.venv && \
+    /.venv/bin/pip install --upgrade pip && \
+    /.venv/bin/pip install -r /tmp/requirements.txt && \
+    if [ "$DEV" = "true" ]; then \
+    /.venv/bin/pip install -r /tmp/requirements.dev.txt; \
+    fi && \
+    rm -rf /tmp && \
+    adduser \
+    --disabled-password \
+    --no-create-home \
+    django-user && \
+    mkdir -p /vol/web/media /vol/web/static && \
+    chown -R django-user:django-user /vol && \
+    chmod -R 755 /vol
 
 # final stage
 FROM python:3.13-slim
@@ -22,10 +43,12 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
+COPY --from=builder /.venv /.venv
+ENV PATH="/.venv/bin:$PATH"
+
 COPY --from=builder /usr/local /usr/local
 COPY . /app
 
-# make entrypoint executable
 RUN chmod +x /app/entrypoint.sh
 
 EXPOSE 8000
