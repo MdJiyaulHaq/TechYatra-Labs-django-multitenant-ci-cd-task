@@ -6,13 +6,6 @@ on:
   pull_request:
     branches: [main]
 
-env:
-  # keep these in sync with docker-compose/.env.dev values
-  POSTGRES_DB: postgres
-  POSTGRES_USER: postgres
-  POSTGRES_PASSWORD: strongpassword
-  DJANGO_SETTINGS_MODULE: Django_TechYatra.settings.dev
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -21,13 +14,13 @@ jobs:
       postgres:
         image: postgres:17-alpine
         env:
-          POSTGRES_DB: ${{ env.POSTGRES_DB }}
-          POSTGRES_USER: ${{ env.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+          POSTGRES_DB: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: strongpassword
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U ${{ env.POSTGRES_USER }} -d ${{ env.POSTGRES_DB }}"
+          --health-cmd "pg_isready -U postgres -d postgres"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -46,13 +39,18 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Load environment variables from .env.dev
+        run: |
+          set -o allexport
+          source .env.dev
+          set +o allexport
+        shell: bash
+
       - name: Wait for Postgres to be ready
         run: |
           until pg_isready -h localhost -p 5432 -U $POSTGRES_USER -d $POSTGRES_DB; do sleep 1; done
 
       - name: Run shared migrations (django-tenants)
-        env:
-          DATABASE_URL: postgres://${{ env.POSTGRES_USER }}:${{ env.POSTGRES_PASSWORD }}@localhost:5432/${{ env.POSTGRES_DB }}
         run: |
           python manage.py migrate_schemas --shared
 
