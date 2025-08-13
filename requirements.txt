@@ -5,4 +5,5 @@ django-tenants==3.8.0
 gunicorn==23.0.0; python_version >= '3.7'
 packaging==25.0; python_version >= '3.8'
 psycopg2-binary==2.9.10; python_version >= '3.8'
+python-dotenv==1.1.1; python_version >= '3.9'
 sqlparse==0.5.3; python_version >= '3.8'
