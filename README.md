@@ -76,7 +76,24 @@ cp .env.dev .env.dev
 docker compose up --build
 ```
 
-This will start both the Django app and a PostgreSQL database. The app will be available at [http://localhost:8000](http://localhost:8000).
+This will start both the Django app and a PostgreSQL database. The app will be available at [http://localhost:8000](http://localhost:8000) or [http://0.0.0.0:8000](http://0.0.0.0:8000).
+
+> **Note:** When using `django-tenants`, the hostname or domain you use to access the site must match an entry in the `Domain` table in the public schema. By default, no domain for `localhost` or `0.0.0.0` is added, so you might get a 404 or "No tenant found" error.
+>
+> To fix this, you should add your chosen hostname (e.g., `localhost`) to the public schema’s domains. You can do this via the Django shell:
+>
+> ```bash
+> docker compose exec web python manage.py shell
+> ```
+>
+> ```python
+> from customers.models import Domain, Client
+> public_tenant = Client.objects.get(schema_name='public')
+> domain = Domain(domain='localhost', tenant=public_tenant, is_primary=True)
+> domain.save()
+> ```
+>
+> After this, accessing `http://localhost:8000` will correctly route to the public schema.
 
 ---
 
@@ -101,6 +118,8 @@ Tenants are managed via the `customers` app (public schema). To create a new ten
    ```
 3. **Access the tenant:**
    Visit `http://tenant1.localhost:8000` (see `/etc/hosts` if needed for local dev).
+
+> **Note:** To access the Django admin for the public schema, visit `http://localhost:8000/admin` after adding `localhost` as a domain to the public tenant as described above. Tenant-specific admin panels are accessed via `<tenant-domain>/admin`, e.g., `http://tenant1.localhost:8000/admin`.
 
 ---
 
