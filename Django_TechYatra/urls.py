@@ -17,10 +17,9 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
-from django.http import HttpResponse
+from django.http import HttpResponse  # noqa
 from drf_spectacular.views import (
     SpectacularAPIView,
-    SpectacularRedocView,
     SpectacularSwaggerView,
 )
 from .views import home
