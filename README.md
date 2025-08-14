@@ -123,6 +123,26 @@ Tenants are managed via the `customers` app (public schema). To create a new ten
 
 ---
 
+## APIs
+
+The application provides RESTful APIs with schema and documentation available:
+
+- **API Schema URL:**
+  Access the OpenAPI schema at `/api/schema/`.
+
+- **Swagger UI:**
+  Interactive API documentation is available at `/api/docs/`.
+
+- **Tenant-specific API Endpoints:**
+  Tenant-specific apps like `products` expose API endpoints that are isolated per tenant schema. For example, to access product-related APIs for a tenant, use the tenant's domain (e.g., `tenant1.localhost`) and access endpoints such as:
+  ```
+  http://tenant1.localhost:8000/api/products/
+  ```
+
+These APIs allow you to manage tenant-specific data securely and separately from other tenants.
+
+---
+
 ## Running Tests and Linting
 
 **Lint code:**
