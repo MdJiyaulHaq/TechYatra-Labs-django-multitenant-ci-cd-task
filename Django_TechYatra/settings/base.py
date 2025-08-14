@@ -156,11 +156,11 @@ REST_FRAMEWORK = {
     #     "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
     # ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-    "DEFAULT_RENDERER_CLASSES": [
-        "drf_spectacular.renderers.OpenApiJsonRenderer",
-        "drf_spectacular.renderers.OpenApiYamlRenderer",
-        "drf_spectacular.renderers.SwaggerUIRenderer",
-    ],
+    # "DEFAULT_RENDERER_CLASSES": [
+    #     "drf_spectacular.renderers.OpenApiJsonRenderer",
+    #     "drf_spectacular.renderers.OpenApiYamlRenderer",
+    #     "drf_spectacular.renderers.SwaggerUIRenderer",
+    # ],
 }
 
 SPECTACULAR_SETTINGS = {
