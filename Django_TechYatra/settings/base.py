@@ -41,6 +41,8 @@ INSTALLED_APPS = [
 SHARED_APPS = [
     "django_tenants",
     "customers",  # public schema models
+    "rest_framework",
+    "drf_spectacular",
     "django.contrib.contenttypes",
     "django.contrib.auth",
     "django.contrib.sessions",
@@ -73,7 +75,7 @@ ROOT_URLCONF = "Django_TechYatra.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -147,3 +149,22 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Django REST Framework and drf-spectacular settings
+REST_FRAMEWORK = {
+    # "DEFAULT_PERMISSION_CLASSES": [
+    #     "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
+    # ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    # "DEFAULT_RENDERER_CLASSES": [
+    #     "drf_spectacular.renderers.OpenApiJsonRenderer",
+    #     "drf_spectacular.renderers.OpenApiYamlRenderer",
+    #     "drf_spectacular.renderers.SwaggerUIRenderer",
+    # ],
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "TechYatra API",
+    "DESCRIPTION": "API documentation for TechYatra multi-tenant platform.",
+    "VERSION": "1.0.0",
+}

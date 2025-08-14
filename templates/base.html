@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>{% block title %}TechYatra Multi-Tenant{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+            margin: 2rem;
+            line-height: 1.5;
+        }
+
+        header {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        header a {
+            text-decoration: none;
+            padding: 0.4rem 0.7rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+
+        .muted {
+            color: #666;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        th,
+        td {
+            border: 1px solid #e6e6e6;
+            padding: 0.6rem;
+            text-align: left;
+        }
+
+        th {
+            background: #fafafa;
+        }
+
+        .chip {
+            display: inline-block;
+            border: 1px solid #e6e6e6;
+            padding: 0.15rem 0.5rem;
+            border-radius: 999px;
+            font-size: 0.85rem;
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body>
+    <header>
+        <strong>TechYatra Multi-Tenant</strong>
+        <span class="muted">|</span>
+        <a href="{% url 'admin:index' %}">Public Admin</a>
+        {% if request.resolver_match and request.resolver_match.url_name %}
+        <!-- Keep simple; doc links may not exist if you removed Spectacular -->
+        {% endif %}
+        {% url 'docs' as docs_url %}
+        {% if docs_url %}<a href="{{ docs_url }}">API Docs</a>{% endif %}
+        {% url 'schema' as schema_url %}
+        {% if schema_url %}<a href="{{ schema_url }}">OpenAPI JSON</a>{% endif %}
+    </header>
+
+    {% block content %}{% endblock %}
+</body>
+
+</html>

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Home · TechYatra Multi-Tenant{% endblock %}
+
+{% block content %}
+{% if is_public %}
+<h1>Welcome</h1>
+<p>
+    This is the public home page of the multi-tenant demo. Each tenant has its own PostgreSQL schema.
+    Use the links below to explore tenants, their admin panels, and example APIs.
+</p>
+
+<h2>Tenants</h2>
+{% if tenants %}
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Schema</th>
+            <th>Domain</th>
+            <th>Quick links</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for t in tenants %}
+        <tr>
+            <td>{{ t.name }}</td>
+            <td><span class="chip">{{ t.schema_name }}</span></td>
+            <td><code>{{ t.domain }}</code></td>
+            <td>
+                <a href="{{ t.home_url }}">Open</a> ·
+                <a href="{{ t.admin_url }}">Admin</a> ·
+                <a href="{{ t.products_url }}">Products API</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p class="muted">No tenants yet. Create one in the Public Admin or via the shell.</p>
+<pre>
+from customers.models import Client, Domain
+tenant = Client(schema_name="tenant1", name="Tenant 1")
+tenant.save()
+Domain(domain="tenant1.localhost", tenant=tenant, is_primary=True).save()
+      </pre>
+<p class="muted">Remember to map <code>tenant1.localhost</code> to <code>127.0.0.1</code> in <code>/etc/hosts</code> for
+    local dev.</p>
+{% endif %}
+
+{% else %}
+<h1>Tenant Home</h1>
+<p>
+    You are viewing tenant <strong>{{ current_domain }}</strong>. Use the links below to manage data or try the sample
+    API.
+</p>
+<ul>
+    <li><a href="{{ tenant_admin_url }}">Tenant Admin</a></li>
+    <li><a href="{{ tenant_products_url }}">Products API</a></li>
+</ul>
+<p class="muted"><a href="/">Go to Public Home</a></p>
+{% endif %}
+{% endblock %}
