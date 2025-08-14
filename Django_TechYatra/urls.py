@@ -23,11 +23,7 @@ from drf_spectacular.views import (
     SpectacularRedocView,
     SpectacularSwaggerView,
 )
-
-
-def home(request):
-    return HttpResponse("<h1>Welcome to TechYatra Labs Multi-Tenant App</h1>")
-
+from .views import home
 
 urlpatterns = [
     path("", home, name="home"),
